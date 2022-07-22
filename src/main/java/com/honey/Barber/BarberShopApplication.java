@@ -17,7 +17,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableWebMvc
 @EnableSwagger2
-//@SpringBootApplication
+@SpringBootApplication
 @ComponentScan(basePackages = "com.honey.Barber")
 public class BarberShopApplication {
 

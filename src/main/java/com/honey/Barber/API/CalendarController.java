@@ -46,7 +46,7 @@ public class CalendarController {
 		customerRepoJPA.save(customer);
 		LocalDate date=LocalDate.now();
 		LocalTime time=LocalTime.of(10, 10, 10);
-		this.setAppointmen("General", new Appointment(0,"General",date,time,
+		this.setAppointmen("General", new Appointment(Long.valueOf("0"),"General",date,time,
 				customer));
 		ArrayList<Customer> cust=new ArrayList<Customer>();
 		cust.add(customer);
@@ -60,8 +60,11 @@ public class CalendarController {
 	public List<Appointment> getCurrentMonth(@RequestParam String siteId) {
 		return calendarRepo.getCurrentMonth(siteId);
 	}
-	
-	
+
+	@GetMapping("getMonth")
+	public List<Appointment> getCurrentMonth(@RequestParam String siteId,@RequestParam int month,@RequestParam int year) {
+		return calendarRepo.getMonthsAppointments(siteId,month,year);
+	}
 	
 	@GetMapping("getFullAppointmenForDay")
 	public List<Appointment> getFullAppointmenForDay(@RequestParam String siteId,@RequestParam int day,@RequestParam int month,@RequestParam int year) {
@@ -83,6 +86,11 @@ public class CalendarController {
 	@RequestMapping(value="updateAppointmen",method= {RequestMethod.POST})
 	public Boolean updateAppointmen(@RequestParam String siteId,@RequestParam Appointment appointment) {
 		return calendarRepo.setAppointment(siteId, appointment);
+	}
+
+	@RequestMapping(value="deleteAppointment",method= {RequestMethod.DELETE})
+	public Boolean deleteAppointment(@RequestParam String siteId,@RequestParam Long id) {
+		return calendarRepo.deleteAppointment(siteId, id);
 	}
 	
 	

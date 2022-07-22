@@ -18,7 +18,7 @@ public class Appointment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
-	private int id;
+	private Long id;
 	
 	@Column
 	String siteId;
@@ -33,10 +33,10 @@ public class Appointment {
 	
 	@OneToOne
 	Customer customer;
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public LocalTime getStartTime() {
@@ -67,7 +67,7 @@ public class Appointment {
 	public void setDate(LocalDate date) {
 		this.date = date;
 	}
-	public Appointment(int id, String siteId, LocalDate date, LocalTime startTime, Customer customer) {
+	public Appointment(Long id, String siteId, LocalDate date, LocalTime startTime, Customer customer) {
 		super();
 		this.id = id;
 		this.siteId = siteId;

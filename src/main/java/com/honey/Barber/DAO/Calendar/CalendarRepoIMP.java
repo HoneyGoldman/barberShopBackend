@@ -1,11 +1,10 @@
 package com.honey.Barber.DAO.Calendar;
 
-import java.sql.ResultSet;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Comparator;
 
@@ -15,12 +14,8 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.honey.Barber.API.SitePropertyController;
 import com.honey.Barber.Beans.Appointment;
 import com.honey.Barber.Beans.Customer;
-import com.honey.Barber.Beans.Day;
-import com.honey.Barber.Beans.Month;
-import com.honey.Barber.Beans.SiteProperty;
 import com.honey.Barber.DAO.SiteProperty.SitePropertyIMP;
 
 @Component
@@ -51,21 +46,18 @@ public class CalendarRepoIMP implements CalendarRepository{
 		
 	}
 	
-//	public List<Appointment> getMonthsAppointments(String siteId,int monthNumber) {
-//		Date date = new Date();
-//		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//		int lastMonth=monthNumber-1;
-//		int nextMonth=monthNumber+1;
-//		 Query jpqlQuery = entityManager.createQuery(
-//				 "SELECT u FROM Appointment u WHERE u.siteId=:siteId and u.monthNumber=:month or u.monthNumber=:lastMonth or u.monthNumber=:nextMonth ORDER BY u.date ASC"
-//		 				);
-//		 jpqlQuery.setParameter("month", monthNumber);
-//		 jpqlQuery.setParameter("lastMonth", lastMonth);
-//		 jpqlQuery.setParameter("nextMonth", nextMonth);
-//		 jpqlQuery.setParameter("siteId", siteId);
-//
-//		 return (List<Appointment>) jpqlQuery.getResultList();
-//	}
+	public List<Appointment> getMonthsAppointments(String siteId,int month,int year) {
+		LocalDate firstOfMonth = LocalDate.of(year,month,1).withDayOfMonth( 1 );
+		LocalDate firstOfNextMonth = LocalDate.of(year,month+1,1).withDayOfMonth( 1 );
+		 Query jpqlQuery = entityManager.createQuery(
+				 "SELECT u FROM Appointment u WHERE u.siteId=:siteId and u.date>=:lastMonth and u.date<=:nextMonth ORDER BY u.date ASC"
+		 				);
+		 jpqlQuery.setParameter("lastMonth", firstOfMonth);
+		 jpqlQuery.setParameter("nextMonth", firstOfNextMonth);
+		 jpqlQuery.setParameter("siteId", siteId);
+
+		 return (List<Appointment>) jpqlQuery.getResultList();
+	}
 
 	public Boolean setAppointment(String siteId, Appointment appointment) {
 		try {
@@ -86,11 +78,32 @@ public class CalendarRepoIMP implements CalendarRepository{
 		return false;
 		
 	}
-	
-	
-	public void deleteAppointment(String siteId, Appointment appointment) {
-		this.appointmentJPA.delete(appointment);;
-		
+
+	@Override
+	public boolean deleteAppointment(String siteId, Appointment appointment) {
+		try {
+			if(appointment.getSiteId().equals(siteId)){
+				this.appointmentJPA.deleteById((long) appointment.getId());
+				return true;
+			}
+			return false;
+		}catch (Exception e) {
+			return false;
+		}
+	}
+
+
+	public boolean deleteAppointment(String siteId, Long id) {
+		try {
+			Appointment app=appointmentJPA.getReferenceById(id);
+			if(app.getSiteId().equals(siteId)){
+				this.appointmentJPA.deleteById(id);
+				return true;
+			}
+			return false;
+		}catch (Exception e) {
+			return false;
+		}
 	}
 
 	public List<Appointment> getDayAppointments(String siteId, LocalDate reqDate) {
@@ -116,7 +129,7 @@ public class CalendarRepoIMP implements CalendarRepository{
 		Customer dummyCustomer=new Customer(0, "dummy", "dummy", siteId, "no source", "no mail");
 		
 		for (int i = 0; i < iterations; i++) {
-			Appointment freeAppointment=new Appointment(0, siteId, reqDate,
+			Appointment freeAppointment=new Appointment((long)0, siteId, reqDate,
 					startTime.plusHours(timePerCustomer.getHour()*i).plusMinutes(timePerCustomer.getMinute()*i)
 					, dummyCustomer);
 			results.add(freeAppointment);
@@ -124,10 +137,10 @@ public class CalendarRepoIMP implements CalendarRepository{
 
 		results.addAll(realAppointments);
 		results=results.stream().sorted(Comparator.comparing(Appointment::getStartTime)).collect(Collectors.toList());
-		for(int i=0;i<results.size()-1;i++){
-			if(results.get(i).getCustomer().getName().equals("dummy") && !results.get(i+1).getCustomer().getName().equals("dummy")
-					&& results.get(i).getStartTime().plusMinutes(timePerCustomerLong)
-					.compareTo(results.get(i+1).getStartTime())>0){
+		for(long i=0;i<results.size()-1;i++){
+			if(results.get((int) i).getCustomer().getName().equals("dummy") && !results.get((int)i+1).getCustomer().getName().equals("dummy")
+					&& results.get((int)i).getStartTime().plusMinutes(timePerCustomerLong)
+					.compareTo(results.get((int)i+1).getStartTime())>0){
 				results.remove(i);
 				i++;
 			}
