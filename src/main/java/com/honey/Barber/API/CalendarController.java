@@ -64,6 +64,7 @@ public class CalendarController {
 	@GetMapping("getMonth")
 	public List<Appointment> getCurrentMonth(@RequestParam String siteId,@RequestParam int month,@RequestParam int year) {
 		return calendarRepo.getMonthsAppointments(siteId,month,year);
+		
 	}
 	
 	@GetMapping("getFullAppointmenForDay")

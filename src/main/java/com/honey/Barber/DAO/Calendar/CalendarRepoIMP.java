@@ -48,7 +48,7 @@ public class CalendarRepoIMP implements CalendarRepository{
 	
 	public List<Appointment> getMonthsAppointments(String siteId,int month,int year) {
 		LocalDate firstOfMonth = LocalDate.of(year,month,1).withDayOfMonth( 1 );
-		LocalDate firstOfNextMonth = LocalDate.of(year,month+1,1).withDayOfMonth( 1 );
+		LocalDate firstOfNextMonth = firstOfMonth.plusMonths(1);
 		 Query jpqlQuery = entityManager.createQuery(
 				 "SELECT u FROM Appointment u WHERE u.siteId=:siteId and u.date>=:lastMonth and u.date<=:nextMonth ORDER BY u.date ASC"
 		 				);
