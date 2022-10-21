@@ -1,10 +1,13 @@
 package com.honey.Barber.Beans;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Admin {
@@ -26,6 +29,12 @@ public class Admin {
 	
 	@Column
 	private String siteId;
+	
+	@Column
+	private String phoneNumber;
+	
+	@OneToMany
+	private List<Location> locations;
 
 	public int getId() {
 		return id;
@@ -69,10 +78,12 @@ public class Admin {
 
 	
 
-	@Override
-	public String toString() {
-		return "Admin [id=" + id + ", password=" + password + ", email=" + email + ", name=" + name + ", familyName="
-				+ familyName + ", siteId=" + siteId + "]";
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	public String getSiteId() {
@@ -87,7 +98,22 @@ public class Admin {
 		super();
 	}
 
-	public Admin(int id, String password, String email, String name, String familyName, String siteId) {
+	public List<Location> getLocations() {
+		return locations;
+	}
+
+	public void setLocations(List<Location> locations) {
+		this.locations = locations;
+	}
+
+	@Override
+	public String toString() {
+		return "Admin [id=" + id + ", password=" + password + ", email=" + email + ", name=" + name + ", familyName="
+				+ familyName + ", siteId=" + siteId + ", phoneNumber=" + phoneNumber + ", locations=" + locations + "]";
+	}
+
+	public Admin(int id, String password, String email, String name, String familyName, String siteId,
+			String phoneNumber, List<Location> locations) {
 		super();
 		this.id = id;
 		this.password = password;
@@ -95,9 +121,10 @@ public class Admin {
 		this.name = name;
 		this.familyName = familyName;
 		this.siteId = siteId;
+		this.phoneNumber = phoneNumber;
+		this.locations = locations;
 	}
-	
-	
+
 	
 
 }
