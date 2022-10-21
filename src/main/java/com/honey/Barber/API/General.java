@@ -1,12 +1,16 @@
 package com.honey.Barber.API;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.honey.Barber.Beans.Admin;
+import com.honey.Barber.Beans.Location;
 import com.honey.Barber.DAO.Admin.AdminRepoIMP;
+import com.honey.Barber.DAO.Location.LocationRepoJPA;
 
 
 @RestControllerAdvice
@@ -15,6 +19,9 @@ public class General {
 
 	@Autowired
 	AdminRepoIMP adminRepo;
+	
+	@Autowired
+	LocationRepoJPA LocationRepo;
 	
 	@GetMapping("test")
 	public String test() {
@@ -36,6 +43,23 @@ public class General {
 		}
 		return null;
 	}	
+	
+	@GetMapping("Locations")
+	public List<Location> getAllLocations() {
+		try {
+			return LocationRepo.findAll();
+		} catch (Exception e) {
+			if (e instanceof NullPointerException) {
+				System.out.println("No Locations in DB");
+			}
+			else
+			{
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}	
+	
 	
 //	@RequestMapping(value="saveCustomer",method= {RequestMethod.PUT})
 //	public void saveCustomer(@RequestBody Customer customer) {
