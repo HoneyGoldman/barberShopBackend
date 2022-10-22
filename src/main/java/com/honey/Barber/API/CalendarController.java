@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,6 +78,20 @@ public class CalendarController {
 	public List<Appointment> getDay(@RequestParam String siteId,@RequestParam int day,@RequestParam int month,@RequestParam int year) {
 		LocalDate reqDate=LocalDate.of(year,month,day);
 		return calendarRepo.getDayAppointments(siteId, reqDate);
+	}
+	
+	@GetMapping("getCurrentTowCustomers")
+	public List<Appointment> getCurrentCustomer(@RequestParam String siteId,@RequestParam int day,@RequestParam int month,@RequestParam int year) {
+		Appointment[] results=new Appointment[2];
+		List<Appointment> todayAppointments=this.getFullAppointmenForDay(siteId,day,month,year);
+		for (int i = 1; i < todayAppointments.size(); i++) {
+			if(LocalTime.now().compareTo(todayAppointments.get(i).getStartTime())<0){
+				results[0]=todayAppointments.get(i-1);
+				results[1]=todayAppointments.get(i);
+				break;
+			}
+		}
+		return Arrays.asList(results);
 	}
 	
 	@RequestMapping(value="setAppointmen",method= {RequestMethod.PUT})
