@@ -91,6 +91,14 @@ public class CalendarController {
 				break;
 			}
 		}
+		Customer dummy=new Customer(0, "dummy", "dummy", siteId, "no source", "no mail");
+		Appointment dummyAppointment=new Appointment((long) 0, siteId, LocalDate.now(), LocalTime.now(), dummy);
+		if(results[0]==null) {
+			results[0]=dummyAppointment;
+		}
+		if(results[1]==null) {
+			results[1]=dummyAppointment;
+		}
 		return Arrays.asList(results);
 	}
 	
